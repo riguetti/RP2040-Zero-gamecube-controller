@@ -1,6 +1,6 @@
 #include "dac_algorithms/melee_F1.hpp"
 #include "communication_protocols/joybus.hpp"
-
+#include "hardware/adc.h"
 namespace DACAlgorithms {
 namespace MeleeF1 {
 
@@ -130,39 +130,107 @@ GCReport getGCReport(GpioToButtonSets::F1::ButtonSet buttonSet) {
     if (horizontal && !readRight) xy.x = oppositeCoord(xy.x);
     if (vertical && !readUp) xy.y = oppositeCoord(xy.y);
 
-    gcReport.xStick = xy.x;
-    gcReport.yStick = xy.y;
+
+
+
+
+
+
+    /* Stick */
+
+    adc_select_input(2);
+    uint stickX = adc_read();
+    adc_select_input(3);
+    uint stickY = adc_read();
+
+    if (stickX > 3180) {
+        stickX = 3180;
+    }
+    if (stickX < 965) {
+        stickX = 965;
+    }
+    if (stickY > 3180) {
+        stickY = 3180;
+    }
+    if (stickY < 965) {
+        stickY = 965;
+    }
+
+
+    int valorStrickX = ((stickX - 965) * 192) / 2215 + 32;
+    int valorStrickY = ((stickY - 965) * 192) / 2215 + 32;
+
+    if (valorStrickX > 224) {
+        valorStrickX = 224;
+    }
+    if (valorStrickX < 32) {
+        valorStrickX = 32;
+    }
+    if (valorStrickY > 224) {
+        valorStrickY = 224;
+    }
+    if (valorStrickY < 32) {
+        valorStrickY = 32;
+    }
+
+
+    gcReport.xStick = valorStrickX;
+    gcReport.yStick = valorStrickY;
 
     /* C-Stick */
     
-    bool cVertical = bs.cUp != bs.cDown;
-    bool cHorizontal = bs.cLeft != bs.cRight;
+    adc_select_input(1);
+    uint stickCX = adc_read();
+    adc_select_input(0);
+    uint stickCY = adc_read();
 
-    Coords cxy;
-
-    if (bs.mx && bs.my) cxy = coords(0.0, 0.0);
-    else if (cVertical && cHorizontal) cxy = coords(0.525, 0.85);
-    else if (cHorizontal) cxy = bs.mx ? coords(0.8375, readUp ? 0.3125 : -0.3125) : coords(1.0, 0.0);
-    else if (cVertical) cxy = coords(0.0, 1.0);
-    else cxy = coords(0.0, 0.0);
-
-    if (cHorizontal && bs.cLeft) cxy.x = oppositeCoord(cxy.x);
-    if (cVertical && bs.cDown) cxy.y = oppositeCoord(cxy.y);
-
-    gcReport.cxStick = cxy.x;
-    gcReport.cyStick = cxy.y;
-
-    /* Dpad */
-    if (bs.mx && bs.my) {
-        gcReport.dDown = bs.cDown;
-        gcReport.dLeft = bs.cLeft;
-        gcReport.dUp = bs.cUp;
-        gcReport.dRight = bs.cRight;
+    if (stickCX > 3180) {
+        stickCX = 3180;
+    }
+    if (stickCX < 965) {
+        stickCX = 965;
+    }
+    if (stickCY > 3180) {
+        stickCY = 3180;
+    }
+    if (stickCY < 965) {
+        stickCY = 965;
     }
 
+
+    int valorCStrickX = ((stickCX - 965) * 192) / 2215 + 32;
+    int valorCStrickY = ((stickCY - 965) * 192) / 2215 + 32;
+
+    if (valorCStrickX > 224) {
+        valorCStrickX = 224;
+    }
+    if (valorCStrickX < 32) {
+        valorCStrickX = 32;
+    }
+    if (valorCStrickY > 224) {
+        valorCStrickY = 224;
+    }
+    if (valorCStrickY < 32) {
+        valorCStrickY = 32;
+    }
+
+
+    gcReport.cyStick = valorCStrickX;
+    gcReport.cxStick = valorCStrickY;
+
+    /* Dpad */
+ 
+		
+        gcReport.dDown = bs.down;
+        gcReport.dLeft = bs.left;
+        gcReport.dUp = bs.up;
+        gcReport.dRight = bs.right;
+    
+
     /* Triggers */
-    gcReport.analogL = bs.l ? 140 : bs.ms ? 94 : bs.ls ? 49 : 0;
-    gcReport.analogR = bs.r ? 140 : 0;
+
+    gcReport.analogL = bs.l ? 224 : 0;
+    gcReport.analogR = bs.r ? 224 : 0;
 
     /* Buttons */
     gcReport.a = bs.a;
@@ -173,6 +241,7 @@ GCReport getGCReport(GpioToButtonSets::F1::ButtonSet buttonSet) {
     gcReport.l = bs.l;
     gcReport.r = bs.r;
     gcReport.start = bs.start;
+	
 
     return gcReport;
 }

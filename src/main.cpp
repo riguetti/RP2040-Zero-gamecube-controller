@@ -2,40 +2,41 @@
 #include "pico/bootrom.h"
 #include "hardware/gpio.h"
 #include "hardware/timer.h"
+
+
+#include "hardware/adc.h"
+
+
 #include <vector>
 
 #include "global.hpp"
 
 #include "dac_algorithms/melee_F1.hpp"
-#include "dac_algorithms/project_plus_F1.hpp"
-#include "dac_algorithms/ultimate_F1.hpp"
-#include "dac_algorithms/set_of_8_keys.hpp"
-#include "dac_algorithms/wired_fight_pad_pro_default.hpp"
-#include "dac_algorithms/xbox_360.hpp"
 
 #include "gpio_to_button_sets/F1.hpp"
-
-#include "usb_configurations/gcc_to_usb_adapter.hpp"
-#include "usb_configurations/hid_with_triggers.hpp"
-#include "usb_configurations/keyboard_8kro.hpp"
-#include "usb_configurations/wired_fight_pad_pro.hpp"
-#include "usb_configurations/xbox_360.hpp"
 
 #include "communication_protocols/joybus.hpp"
 
 #include "other/runtime_remapping_mode.hpp"
 
 int main() {
+	
+	
+
 
     set_sys_clock_khz(1000*us, true);
     stdio_init_all();
+	
+		
+	adc_init();
+    // Make sure GPIO is high-impedance, no pullups etc
+    adc_gpio_init(26);
+	adc_gpio_init(27);
+    adc_gpio_init(28);
+    adc_gpio_init(29);
+	
 
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
-    gpio_put(LED_PIN, 0);
 
-    gpio_init(USB_POWER_PIN);
-    gpio_set_dir(USB_POWER_PIN, GPIO_IN);
 
     #if USE_UART0
     // Initialise UART 0
@@ -78,88 +79,15 @@ int main() {
         if (!gpio_get(gcDataPin)) goto stateLabel__forceJoybusEntry;
     }
     
-    /* Mode selection logic */
 
-    // Not plugged through USB =>  Joybus
-    if (!gpio_get(USB_POWER_PIN)) {
         stateLabel__forceJoybusEntry:
 
-        if ((!gpio_get(7)) || (!gpio_get(2))) { // 10-GP7 OR 4-GP2 : F1 / P+
-            CommunicationProtocols::Joybus::enterMode(gcDataPin, [](){
-                return DACAlgorithms::ProjectPlusF1::getGCReport(GpioToButtonSets::F1::defaultConversion());
-            });
-        }
 
-        if (!gpio_get(6)) { // 9-GP6 : F1 / ultimate
-            CommunicationProtocols::Joybus::enterMode(gcDataPin, [](){
-                return DACAlgorithms::UltimateF1::getGCReport(GpioToButtonSets::F1::defaultConversion());
-            });
-        }
+
         
-        // Else: F1 / Melee
+
         CommunicationProtocols::Joybus::enterMode(gcDataPin, [](){ return DACAlgorithms::MeleeF1::getGCReport(GpioToButtonSets::F1::defaultConversion()); });
-    }
-
-    // Else:
     
-    // 17 - GP13 - CLeft - Melee / XInput
-    if (!gpio_get(13)) USBConfigurations::Xbox360::enterMode([](){
-        USBConfigurations::Xbox360::actuateReportFromGCState(DACAlgorithms::MeleeF1::getGCReport(GpioToButtonSets::F1::defaultConversion()));
-    });
 
-    // 19 - GP14 - A - Xbox360/Xbox360 (aka XInput)
-    if (!gpio_get(14)) USBConfigurations::Xbox360::enterMode([](){
-        DACAlgorithms::Xbox360::actuateXbox360Report(GpioToButtonSets::F1::defaultConversion());
-    });
 
-    // 27 - GP21 - X - Melee / HID
-    if (!gpio_get(21)) USBConfigurations::HidWithTriggers::enterMode([](){
-        USBConfigurations::HidWithTriggers::actuateReportFromGCState(DACAlgorithms::MeleeF1::getGCReport(GpioToButtonSets::F1::defaultConversion()));
-    });
-
-    // 29 - GP22 - Y - Ult / HID
-    if (!gpio_get(22)) USBConfigurations::HidWithTriggers::enterMode([](){
-        USBConfigurations::HidWithTriggers::actuateReportFromGCState(DACAlgorithms::UltimateF1::getGCReport(GpioToButtonSets::F1::defaultConversion()));
-    });
-
-    // 26 - GP20 - LS - P+ / HID
-    if (!gpio_get(20)) USBConfigurations::HidWithTriggers::enterMode([](){
-        USBConfigurations::HidWithTriggers::actuateReportFromGCState(DACAlgorithms::ProjectPlusF1::getGCReport(GpioToButtonSets::F1::defaultConversion()));
-    });
-
-    // 4 - GP2 - Right : F1 / P+ / WFPP
-    if (!gpio_get(2)) USBConfigurations::WiredFightPadPro::enterMode([](){
-        USBConfigurations::WiredFightPadPro::actuateReportFromGCState(DACAlgorithms::ProjectPlusF1::getGCReport(GpioToButtonSets::F1::defaultConversion()));
-    });
-
-    // 10 - GP7 - MY : F1 / P+ / adapter
-    if (!gpio_get(7)) USBConfigurations::GccToUsbAdapter::enterMode([](){
-        USBConfigurations::GccToUsbAdapter::actuateReportFromGCState(DACAlgorithms::ProjectPlusF1::getGCReport(GpioToButtonSets::F1::defaultConversion()));
-    });
-
-    // 9 - GP6 - MX : F1 / ultimate / adapter
-    if (!gpio_get(6)) USBConfigurations::GccToUsbAdapter::enterMode([](){
-        USBConfigurations::GccToUsbAdapter::actuateReportFromGCState(DACAlgorithms::UltimateF1::getGCReport(GpioToButtonSets::F1::defaultConversion()));
-    });
-
-    // 7 - GP5 - L: F1 / melee / wired_fight_pad_pro
-    if (!gpio_get(5)) USBConfigurations::WiredFightPadPro::enterMode([](){
-        USBConfigurations::WiredFightPadPro::actuateReportFromGCState(DACAlgorithms::MeleeF1::getGCReport(GpioToButtonSets::F1::defaultConversion()));
-    });
-
-    // 6 - GP4 - Left: F1 / wired_fight_pad_pro_default / wired_fight_pad_pro
-    if (!gpio_get(4)) USBConfigurations::WiredFightPadPro::enterMode([](){
-        DACAlgorithms::WiredFightPadProDefault::actuateWFPPReport(GpioToButtonSets::F1::defaultConversion());
-    });
-
-    // 0 - 0 - Start: F1 / 8 keys set / 8KRO keyboard
-    if (!gpio_get(keyboardPin)) USBConfigurations::Keyboard8KRO::enterMode([](){
-        DACAlgorithms::SetOf8Keys::actuate8KeysReport(GpioToButtonSets::F1::defaultConversion());
-    });
-
-    // Default: F1 / melee / adapter
-    USBConfigurations::GccToUsbAdapter::enterMode(
-        [](){USBConfigurations::GccToUsbAdapter::actuateReportFromGCState(DACAlgorithms::MeleeF1::getGCReport(GpioToButtonSets::F1::defaultConversion()));},
-        [](){USBConfigurations::GccToUsbAdapter::actuateReportFromGCState(DACAlgorithms::UltimateF1::getGCReport(GpioToButtonSets::F1::defaultConversion()));}
-        );
 }

@@ -19,25 +19,25 @@ const PinMapping pinMappings[] = {
     #if !USE_UART0
     { 0, &ButtonSet::start },
     #endif
-    { 2, &ButtonSet::right },
-    { 3, &ButtonSet::down },
-    { 4, &ButtonSet::left },
-    { 5, &ButtonSet::l },
-    { 6, &ButtonSet::mx },
-    { 7, &ButtonSet::my },
-    { 12, &ButtonSet::cUp },
-    { 13, &ButtonSet::cLeft },
-    { 14, &ButtonSet::a },
-    { 15, &ButtonSet::cDown },
-    { 16, &ButtonSet::cRight },
-    { 17, &ButtonSet::up },
-    { 18, &ButtonSet::ms },
-    { 19, &ButtonSet::z },
+    { 4, &ButtonSet::right },
+    { 2, &ButtonSet::down },
+    { 3, &ButtonSet::left },
+    { 9, &ButtonSet::l },
+    { 18, &ButtonSet::mx },
+    { 17, &ButtonSet::my },
+  //  { 12, &ButtonSet::cUp },
+ //   { 13, &ButtonSet::cLeft },
+    { 5, &ButtonSet::a },
+ //   { 19, &ButtonSet::cDown },
+ //   { 21, &ButtonSet::cRight },
+    { 1, &ButtonSet::up },
+    { 14, &ButtonSet::ms },
+    { 11, &ButtonSet::z },
     { 20, &ButtonSet::ls },
-    { 21, &ButtonSet::x },
-    { 22, &ButtonSet::y },
-    { 26, &ButtonSet::b },
-    { 27, &ButtonSet::r }
+    { 7, &ButtonSet::x },
+    { 8, &ButtonSet::y },
+    { 6, &ButtonSet::b },
+    { 10, &ButtonSet::r }
 };
 
 bool remapped;
@@ -50,11 +50,11 @@ const PinMapping remappedPinMappings[] = {
     { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.lPin, &ButtonSet::l },
     { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.mxPin, &ButtonSet::mx },
     { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.myPin, &ButtonSet::my },
-    { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.cUpPin, &ButtonSet::cUp },
-    { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.cLeftPin, &ButtonSet::cLeft },
+  //  { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.cUpPin, &ButtonSet::cUp },
+  //  { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.cLeftPin, &ButtonSet::cLeft },
     { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.aPin, &ButtonSet::a },
-    { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.cDownPin, &ButtonSet::cDown },
-    { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.cRightPin, &ButtonSet::cRight },
+  //  { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.cDownPin, &ButtonSet::cDown },
+  //  { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.cRightPin, &ButtonSet::cRight },
     { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.upPin, &ButtonSet::up },
     { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.msPin, &ButtonSet::ms },
     { Persistence::read<Persistence::Pages::RuntimeRemapping>()->f1GpioToButtonSetRemapping.zPin, &ButtonSet::z },
@@ -81,7 +81,6 @@ ButtonSet defaultConversion() {
 
     if (!init) initDefaultConversion();
 
-    if (remapped) gpio_put(LED_PIN, 1);
     
     ButtonSet f1ButtonSet;
 

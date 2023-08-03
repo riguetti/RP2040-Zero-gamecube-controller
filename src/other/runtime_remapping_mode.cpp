@@ -46,7 +46,6 @@ namespace Other {
         }
         sleep_ms(1000);
 
-        gpio_put(LED_PIN, 1);
         int led = 1;
 
         while (pinsPressedInOrder.size() != 20) {
@@ -55,11 +54,10 @@ namespace Other {
                 eligiblePins.erase(std::remove_if(eligiblePins.begin(), eligiblePins.end(), [pressedPin](int i){return pressedPin==i;}));
                 pinsPressedInOrder.push_back(pressedPin);
                 led = !led;
-                gpio_put(LED_PIN, led);
+ 
             }
         }
 
-        gpio_put(LED_PIN, 0);
 
         Persistence::Pages::RuntimeRemapping runtimeRemappingCheckout = Persistence::clone<Persistence::Pages::RuntimeRemapping>();
 
