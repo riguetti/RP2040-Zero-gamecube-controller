@@ -51,6 +51,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ### Pin Mapping
 Here's the pin mapping for the RP2040-Zero GameCube Controller:
 
+- Data Pin: GPIO 15
 - Start: GPIO 0
 - DpadUP: GPIO 1
 - DpadDown: GPIO 2
