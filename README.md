@@ -73,16 +73,12 @@ Here's the pin mapping for the RP2040-Zero GameCube Controller:
 ### Getting Started
 To get started with the RP2040-Zero GameCube Controller, follow these steps:
 
-##### Hardware Requirements: 
--Make sure you have an RP2040-Zero board and the necessary connections to set it up as a GameCube controller.
+#### Hardware Requirements: 
+- Make sure you have an RP2040-Zero board and the necessary connections to set it up as a GameCube controller.
 
 #### Installation:
 - Download the latest release from the Releases page.
-
-#### Upload Firmware:
 - Upload the firmware to your RP2040-Zero board.
-
-#### Connect and Play:
 - Connect your RP2040-Zero to a GameCube console and start playing!
 
 
