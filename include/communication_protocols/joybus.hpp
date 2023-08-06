@@ -6,10 +6,8 @@
 
 #include <functional>
 
-namespace CommunicationProtocols
-{
-namespace Joybus
-{
+namespace CommunicationProtocols {
+namespace Joybus {
 
 /**
  * @short Enters the Joybus communication mode
