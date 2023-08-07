@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-set(PICO_SDK_PATH "/path/to/pico-sdk")
+#set(PICO_SDK_PATH "/path/to/pico-sdk")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 set(PICO_SDK_FETCH_FROM_GIT 1)
