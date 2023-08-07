@@ -26,6 +26,7 @@ struct __attribute__((packed)) GCReport {
 	uint8_t analogR;
 };
 
+
 const GCReport defaultGcReport = { .a = 0, .b = 0, .x = 0, .y = 0, .start = 0,
 		.pad0 = 0, .dLeft = 0, .dRight = 0, .dDown = 0, .dUp = 0, .z = 0,
 		.r = 0, .l = 0, .pad1 = 1, .xStick = 128, .yStick = 128, .cxStick = 128,
