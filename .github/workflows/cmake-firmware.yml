@@ -75,5 +75,5 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: pico_rectangle_${{ github.sha }}.uf2
-        path: ${{github.workspace}}/build/pico_rectangle.uf2
+        path: ${{github.workspace}}/build/RP2040-Zero-gamecube-controller.uf2
         if-no-files-found: error
